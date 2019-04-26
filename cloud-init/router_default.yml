@@ -1,0 +1,64 @@
+#cloud-config
+hostname: vcr1-chdk2
+password: Ein8Mal10Hoch3SicheresPasswortBitte!
+chpasswd: {expire: False}
+ssh_pwauth: true
+ssh_authorized_keys:
+  - <your own public rsa key>
+package_upgrade: true
+packages:
+- dhcp
+#
+bootcmd:
+  - ifdown eth1
+  - ifup eth1
+  - ifdown eth2
+  - ifup eth2
+runcmd:
+  - 'echo "net.ipv4.ip_forward=1" > /etc/sysctl.d/ip_forward.conf'
+  - 'sysctl -p /etc/sysctl.d/ip_forward.conf'
+  - 'setenforce 0'
+  - 'firewall-cmd --permanent --direct --passthrough ipv4 -t nat -I POSTROUTING -o eth0 -j MASQUERADE -s <privnet2 network>'
+  - 'firewall-cmd --permanent --direct --passthrough ipv4 -t nat -I POSTROUTING -o eth0 -j MASQUERADE -s <privnet3 network>'
+  - 'firewall-cmd --change-interface=eth1 --zone=internal --permanent'
+  - 'firewall-cmd --change-interface=eth2 --zone=internal --permanent'
+  - 'firewall-cmd --zone=internal --permanent --add-service https'
+  - 'firewall-cmd --zone=internal --permanent --add-service ntp'
+  - 'firewall-cmd --zone=internal --permanent --add-port=2426/udp'
+  - 'firewall-cmd --set-default-zone=external'
+  - 'firewall-cmd --complete-reload'
+  - 'echo "default-lease-time 600;" > /etc/dhcp/dhcpd.conf'
+  - 'echo "max-lease-time 7200;" >> /etc/dhcp/dhcpd.conf'
+  - 'echo "subnet <privnet2 network> netmask <privnet2 netmask> {" >> /etc/dhcp/dhcpd.conf'
+  - 'echo "   option subnet-mask <privnet2 netmask>;" >> /etc/dhcp/dhcpd.conf'
+  - 'echo "   option routers <privnet2 router IP>;" >> /etc/dhcp/dhcpd.conf'
+  - 'echo "   range <privnet2 range>;" >> /etc/dhcp/dhcpd.conf'
+  - 'echo "}" >> /etc/dhcp/dhcpd.conf'
+  - 'echo "subnet <privnet3 network> netmask <privnet3 netmask> {" >> /etc/dhcp/dhcpd.conf'
+  - 'echo "   option subnet-mask <privnet3 netmask>;" >> /etc/dhcp/dhcpd.conf'
+  - 'echo "   option routers <privnet3 router IP>;" >> /etc/dhcp/dhcpd.conf'
+  - 'echo "   range <privnet3 range>;" >> /etc/dhcp/dhcpd.conf'
+  - 'echo "}" >> /etc/dhcp/dhcpd.conf'
+  - 'sed -i "s@ExecStart.*@ExecStart=/usr/sbin/dhcpd -f -cf /etc/dhcp/dhcpd.conf -user dhcpd -group dhcpd --no-pid eth1 eth2@" /usr/lib/systemd/system/dhcpd.service'
+  - 'echo "BOOTPROTO=static" > /etc/sysconfig/network-scripts/ifcfg-eth1'
+  - 'echo "ONBOOT=yes" >> /etc/sysconfig/network-scripts/ifcfg-eth1'
+  - 'echo "DEVICE=eth1" >> /etc/sysconfig/network-scripts/ifcfg-eth1'
+  - 'echo "IPADDR=\"<privnet2 router IP>\"" >> /etc/sysconfig/network-scripts/ifcfg-eth1'
+  - 'echo "NETMASK=\"<privnet2 netmask>\"" >> /etc/sysconfig/network-scripts/ifcfg-eth1'
+  - 'echo "DNS1=\"<DNS IP>\"" >> /etc/sysconfig/network-scripts/ifcfg-eth1'
+  - 'echo "BOOTPROTO=static" > /etc/sysconfig/network-scripts/ifcfg-eth2'
+  - 'echo "ONBOOT=yes" >> /etc/sysconfig/network-scripts/ifcfg-eth2'
+  - 'echo "DEVICE=eth2" >> /etc/sysconfig/network-scripts/ifcfg-eth2'
+  - 'echo "IPADDR=\"<privnet3 router IP>\"" >> /etc/sysconfig/network-scripts/ifcfg-eth2'
+  - 'echo "NETMASK=\"<privnet3 netmask>\"" >> /etc/sysconfig/network-scripts/ifcfg-eth2'
+  - 'echo "DNS1=\"<DNS IP>\"" >> /etc/sysconfig/network-scripts/ifcfg-eth2'
+  - 'echo "ZONE=external" >> /etc/sysconfig/network-scripts/ifcfg-eth0'
+  - 'systemctl enable dhcpd'
+
+final_message: "==== Cloud-init completed ===="
+power_state:
+ delay: "+1"
+ mode: reboot
+ message: Bye Bye
+ timeout: 30
+ condition: True
