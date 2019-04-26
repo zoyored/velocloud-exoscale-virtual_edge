@@ -1,0 +1,65 @@
+#cloud-config
+hostname: vcr1-chdk2
+password: Ein8Mal10Hoch3SicheresPasswortBitte!
+chpasswd: {expire: False}
+ssh_pwauth: true
+ssh_authorized_keys:
+  - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCuZVY2pnoOT4Hbnn4zcqj+vvkFi7RrRdzJ829Uq3+8qDwj313bn/Pe2MM8tdNiMQ079G5CNNZR1gK8tPWhiLMYSaTRhKA23XBCzQhnKvZFRjlXMnpUZ7LL7jd4W14vfpBizqw2yANmz0XDgT9duj+yGrke1A3KoySVSC3GfIXq2hzkbKqX9GLWs6AcqUkBUCQ09wXJ24F+xhYBGArlBm+2ZMEeklaoEqmx7S8Pg6f7MD/2kkBuTmXycqoL4sadtYQWDp7YYVQcHO57fz6msxwLNk2tgcZMebTj0wqjLnLqfu4qo+yzyjISE5YqI0SOPofadff9ftmcmmr9duZhv6fR mathias@brandi.vorderbichl.local
+package_upgrade: true
+packages:
+- dhcp
+#
+bootcmd:
+  - ifdown eth1
+  - ifup eth1
+  - ifdown eth2
+  - ifup eth2
+runcmd:
+  - 'echo "net.ipv4.ip_forward=1" > /etc/sysctl.d/ip_forward.conf'
+  - 'sysctl -p /etc/sysctl.d/ip_forward.conf'
+  - 'setenforce 0'
+  - 'firewall-cmd --permanent --direct --passthrough ipv4 -t nat -I POSTROUTING -o eth0 -j MASQUERADE -s 192.168.254.0/24'
+  - 'firewall-cmd --permanent --direct --passthrough ipv4 -t nat -I POSTROUTING -o eth0 -j MASQUERADE -s 192.168.253.0/24'
+  - 'firewall-cmd --change-interface=eth1 --zone=internal --permanent'
+  - 'firewall-cmd --change-interface=eth2 --zone=internal --permanent'
+  - 'firewall-cmd --zone=internal --permanent --add-service https'
+  - 'firewall-cmd --zone=internal --permanent --add-service ntp'
+  - 'firewall-cmd --zone=internal --permanent --add-port=2426/udp'
+  - 'firewall-cmd --set-default-zone=external'
+  - 'firewall-cmd --complete-reload'
+  - 'echo "default-lease-time 600;" > /etc/dhcp/dhcpd.conf'
+  - 'echo "max-lease-time 7200;" >> /etc/dhcp/dhcpd.conf'
+  - 'echo "subnet 192.168.254.0 netmask 255.255.255.0 {" >> /etc/dhcp/dhcpd.conf'
+  - 'echo "   option subnet-mask 255.255.255.0;" >> /etc/dhcp/dhcpd.conf'
+  - 'echo "   option routers 192.168.254.1;" >> /etc/dhcp/dhcpd.conf'
+  - 'echo "   range 192.168.254.10 192.168.254.110;" >> /etc/dhcp/dhcpd.conf'
+  - 'echo "}" >> /etc/dhcp/dhcpd.conf'
+  - 'echo "subnet 192.168.253.0 netmask 255.255.255.0 {" >> /etc/dhcp/dhcpd.conf'
+  - 'echo "   option subnet-mask 255.255.255.0;" >> /etc/dhcp/dhcpd.conf'
+  - 'echo "   option routers 192.168.253.1;" >> /etc/dhcp/dhcpd.conf'
+  - 'echo "   range 192.168.253.10 192.168.253.110;" >> /etc/dhcp/dhcpd.conf'
+  - 'echo "}" >> /etc/dhcp/dhcpd.conf'
+  - 'echo "nameserver 8.8.8.8" >> /ect/resolv.conf'
+  - 'sed -i "s@ExecStart.*@ExecStart=/usr/sbin/dhcpd -f -cf /etc/dhcp/dhcpd.conf -user dhcpd -group dhcpd --no-pid eth1 eth2@" /usr/lib/systemd/system/dhcpd.service'
+  - 'echo "BOOTPROTO=static" > /etc/sysconfig/network-scripts/ifcfg-eth1'
+  - 'echo "ONBOOT=yes" >> /etc/sysconfig/network-scripts/ifcfg-eth1'
+  - 'echo "DEVICE=eth1" >> /etc/sysconfig/network-scripts/ifcfg-eth1'
+  - 'echo "IPADDR=\"192.168.254.1\"" >> /etc/sysconfig/network-scripts/ifcfg-eth1'
+  - 'echo "NETMASK=\"255.255.255.0\"" >> /etc/sysconfig/network-scripts/ifcfg-eth1'
+  - 'echo "DNS1=\"8.8.8.8\"" >> /etc/sysconfig/network-scripts/ifcfg-eth1'
+  - 'echo "BOOTPROTO=static" > /etc/sysconfig/network-scripts/ifcfg-eth2'
+  - 'echo "ONBOOT=yes" >> /etc/sysconfig/network-scripts/ifcfg-eth2'
+  - 'echo "DEVICE=eth2" >> /etc/sysconfig/network-scripts/ifcfg-eth2'
+  - 'echo "IPADDR=\"192.168.253.1\"" >> /etc/sysconfig/network-scripts/ifcfg-eth2'
+  - 'echo "NETMASK=\"255.255.255.0\"" >> /etc/sysconfig/network-scripts/ifcfg-eth2'
+  - 'echo "DNS1=\"8.8.8.8\"" >> /etc/sysconfig/network-scripts/ifcfg-eth2'
+  - 'echo "ZONE=external" >> /etc/sysconfig/network-scripts/ifcfg-eth0'
+  - 'systemctl enable dhcpd'
+
+final_message: "==== Cloud-init completed ===="
+power_state:
+ delay: "+1"
+ mode: reboot
+ message: Bye Bye
+ timeout: 30
+ condition: True
