@@ -8,9 +8,9 @@ The VeloCloud virtual Edge having a default interface map for KVM Hypervisor. Th
 
 ### Interface Map
 ```
-Hypervisor      VeloCloud Edge
-eth0 Public     eth0 - GE1 LAN
-eth1 Privat     eth1 - GE2 LAN
-eth2 Privat     eth2 - GE3 WAN 
-eth3 Privat     eth3 - GE4 WAN
+Hypervisor Instance        VeloCloud Edge
+eth0 Public               eth0 - GE1 LAN
+eth1 Privat               eth1 - GE2 LAN
+eth2 Privat               eth2 - GE3 WAN 
+eth3 Privat               eth3 - GE4 WAN
 ``` 
