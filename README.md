@@ -1,29 +1,39 @@
 # velocloud-exoscale-virtual_edge
-## Deployment of VeloCloud virtual Edge on Exoscale 
-A1 Digital Deutschland GmbH, 2019<br>
-sd-wan@a1.digital 
-## Base Case
-Exoscale Instances having a ordered interface setup by default. The sequence isn't customizable. First interface is the public IF eth0, all privat networks whos configured by user, starts at eth1 up to bottom. Hypervisor on Exoscale is KVM.
-The VeloCloud virtual Edge having a default interface map for KVM Hypervisor. The sequence isn't customizable. The two first interfaces was used for LAN IF (switched ports). The WAN IF (routed ports) are using eth2 and eth3. So you can't register a virtual Edge hwo has deployed on Exoscale.
+## Deployment of VeloCloud virtual Edge on Exoscale
+\#A1 Digital Deutschland GmbH, 2019<br>
+\#sd-wan@a1.digital 
+## Requirements 
+Prequisites for deploying a virtual VeloCloud Edge to Exoscale are.
+- use of A1 Digital SD WAN with valid license
+- use of the Exoscale platform with vailid payment
+- user with Administrator role for configuration on both platforms
+- egoscale CLI tool (alternatively)
+<br>
+## Introduction
+The virtual VeloCloud Edge template are using a interface mapping table as following
+<br>
+| Interface Name by OS | Interface Name by VeloCloud | Description |
+--------------------------------------------------------------------
+| Eth0 | GE1 | Switched Port LAN |
+| Eth1 | GE2 | Switched Port LAN |
+| Eth2 | GE3 | WAN Port (DHCP by default) |
+| Eth3 | GE4 | WAN Port (DHCP by default) |
+<br>
+An instance on Exoscale always uses the Eth0 interface as a WAN interface. 
+All subsequent configurable interfaces are Privat Network interfaces. They having no direct
+access to the Internet.
+<br>
+|
 
-### Interface Map
+
+
+### Hypervisor      VeloCloud Edge
 ```
-Hypervisor Instance       VeloCloud Edge
-eth0 Public               eth0 - GE1 LAN
-eth1 privnet1             eth1 - GE2 LAN
-eth2 privnet2             eth2 - GE3 WAN 
-eth3 privnet3             eth3 - GE4 WAN
-``` 
+eth0 Public     eth0 - GE1 LAN
+eth1 Privat     eth1 - GE2 LAN
+eth2 Privat     eth2 - GE3 WAN 
+eth3 Privat     eth3 - GE4 WAN
+```
 ## Solution
 Create a simple Router (instance type micro) to hiding the Velocloud Edge.<br>
 ```
-Hypervisor Instance       VeloCloud Edge        Router
-eth0 Public               eth0 - GE1 LAN
-eth1 privnet1             eth1 - GE2 LAN
-eth2 privnet2             eth2 - GE3 WAN        eth1 privnet2
-eth3 privnet3             eth3 - GE4 WAN        eth2 privnet3
-                                                eth0 Public
-``` 
-On your Edge you will lost the first LAN interface GE1 for using. Interface will never receive a public IP from Exoscale. It's a dead IF. GE 3 and GE 4 can now communicate over privnet2 and privnet3 via router to Internet. You can register this Edge and using it to reach your Exoscale instances behind privnet1. 
-
-ethtool -K eth1 tx off rx off
