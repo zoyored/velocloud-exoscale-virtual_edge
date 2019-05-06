@@ -8,12 +8,13 @@ Prequisites for deploying a virtual VeloCloud Edge to Exoscale are.
 - use of the Exoscale platform with vailid payment
 - user with Administrator role for configuration on both platforms
 - egoscale CLI tool (alternatively)
+
 <br>
 ## Introduction
 The virtual VeloCloud Edge template are using a interface mapping table as following
 <br>
 | Interface Name by OS | Interface Name by VeloCloud | Description |
---------------------------------------------------------------------
+|----------------------|-----------------------------|-------------|
 | Eth0 | GE1 | Switched Port LAN |
 | Eth1 | GE2 | Switched Port LAN |
 | Eth2 | GE3 | WAN Port (DHCP by default) |
