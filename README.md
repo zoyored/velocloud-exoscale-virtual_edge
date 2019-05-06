@@ -18,10 +18,12 @@ eth3 privnet3             eth3 - GE4 WAN
 Create a simple Router (instance type micro) to hiding the Velocloud Edge.<br>
 ```
 Hypervisor Instance       VeloCloud Edge        Router
-eth0 Public               eth0 - GE1 LAN        
+eth0 Public               eth0 - GE1 LAN
 eth1 privnet1             eth1 - GE2 LAN
 eth2 privnet2             eth2 - GE3 WAN        eth1 privnet2
 eth3 privnet3             eth3 - GE4 WAN        eth2 privnet3
                                                 eth0 Public
 ``` 
 On your Edge you will lost the first LAN interface GE1 for using. Interface will never receive a public IP from Exoscale. It's a dead IF. GE 3 and GE 4 can now communicate over privnet2 and privnet3 via router to Internet. You can register this Edge and using it to reach your Exoscale instances behind privnet1. 
+
+ethtool -K eth1 tx off rx off
