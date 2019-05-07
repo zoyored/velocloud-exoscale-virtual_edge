@@ -69,7 +69,8 @@ Now create the instance as following. `Compute` -> `Instances` -> `Add`
 ![Create Instance](img/0004.png)
 
 The following informations are required. 
-
+| | |
+|-|-|
 | **Template:** | Linux CentOS 7.6 64-bit |
 | **Instance Type:** | Micro |
 | **Disk:** | 10GB |
