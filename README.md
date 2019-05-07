@@ -32,7 +32,7 @@ access to the Internet. The compute instance will using a interface table as fol
 Neither the interface ranking on Exoscale, nor the mapping table of VeloCloud can be modified.
 In order to be able to use the VeloCloud Edge on Exoscale, an instance is used to correct the interface ranking. The instance uses an operating system with low resource requirements and routing and firewall functionality.
 
-|    **Router**                                  |    ***VeloCloud Edge***                                  |
+|    **Router**                                  |    **VeloCloud Edge**                                    |
 |------------------------------------------------|----------------------------------------------------------|
 
 ![Router Edge](img/0001.jpg)
@@ -51,4 +51,30 @@ For deployment, you need 2 Private Networks. In the egoscale CLI you can create 
 [user@host ~ ]$ exo privnet create privNet2ForVirtualEdge1 -z de-fra-1 
 ```
 
+Next, we recommend creating a firewall rule to protect the instances. For administration purposes, SSH access to the router is used. Restrict this access to the source networks you are using. The VeloCloud Hub site functionality requires a DNAT for the VCMP protocol (UDP 2426). Initially the protocols HTTPS (tcp 443), NTP (tcp / udp 123) and VCMP (udp 2426) are required. The firewall configuration in Exoscale is cross-zone.
+`Compute` -> `Firewalling` -> `Add`
+
+![Add Rule](img/0003.png)
+
+In the egoscale CLI you can create the firewall rules with the following command.
+```
+[user@host ~ ]$ exo firewall list
+[user@host ~ ]$ exo firewall create VelocloudEdge
+[user@host ~ ]$ exo firewall add VelocloudEdge -c “0.0.0.0/0”  -p udp -P 2426 -d “From any to Instance allow UDP 2426 (VCMP)”
+[user@host ~ ]$ exo firewall add VelocloudEdge -c “17.17.17.17/32”  -p tcp -P 22 -d “From my Network to Instance allow ssh”
+```
+
+Now create the instance as following. `Compute` -> `Instances` -> `Add`
+
+![Create Instance](img/0004.png)
+
+| The following informations are required. | |
+|------------------------------------------|-|
+| **Template:** | Linux CentOS 7.6 64-bit |
+| **Instance Type:** | Micro |
+| **Disk:** | 10GB |
+| **Keypair:** | your ssh public key or default |
+| **Private Networks:** | PrivNet2ForVirtualEdge |
+| **Security Groups:** | VeloCloudEdge |
+| ** User Data:** |  To create the instance, additionally use the Cloud-Init Script of the A1 Digital. This can be found at [here](cloud-init/router_default.yml). Adjust the parameters in angle brackets in the script to your desired values. |
 
