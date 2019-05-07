@@ -4,7 +4,7 @@ password: <your secure password>
 chpasswd: {expire: False}
 ssh_pwauth: true
 ssh_authorized_keys:
-  - <your id_ras.pub key>
+  - <your id_rsa.pub key>
 package_upgrade: true
 packages:
 - dhcp
