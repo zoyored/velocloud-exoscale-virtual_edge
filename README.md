@@ -69,13 +69,14 @@ Now create the instance as following. `Compute` -> `Instances` -> `Add`
 ![Create Instance](img/0004.png)
 
 The following informations are required. 
-| | |
-|-|-|
+| Properties | Values |
+|------------|--------|
 | **Template:** | Linux CentOS 7.6 64-bit |
 | **Instance Type:** | Micro |
 | **Disk:** | 10GB |
 | **Keypair:** | your ssh public key or default |
 | **Private Networks:** | PrivNet2ForVirtualEdge |
 | **Security Groups:** | VeloCloudEdge |
-| **User Data:** |  To create the instance, additionally use the Cloud-Init Script of the A1 Digital. This can be found at [here](cloud-init/router_default.yml). Adjust the parameters in angle brackets in the script to your desired values. |
+| **User Data:** |  Additionally use the [Cloud-Init Script](cloud-init/router_default.yml) of the A1 Digital to create the instance. Edit the parameters (<foo bar>) in the script to your desired values. |
+
 
