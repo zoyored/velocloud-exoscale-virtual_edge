@@ -32,7 +32,7 @@ access to the Internet. The compute instance will using a interface table as fol
 Neither the interface ranking on Exoscale, nor the mapping table of VeloCloud can be modified.
 In order to be able to use the VeloCloud Edge on Exoscale, an instance is used to correct the interface ranking. The instance uses an operating system with low resource requirements and routing and firewall functionality.
 
-![Router Edge](img/0001.png)
+![Router Edge](img/0001.jpg)
 
 
 
