@@ -35,14 +35,14 @@ In order to be able to use the VeloCloud Edge on Exoscale, an instance is used t
 |    **Router**                                  |    **VeloCloud Edge**                                    |
 |------------------------------------------------|----------------------------------------------------------|
 
-![Router Edge](img/0001.jpg)
+![Router Edge](.img/0001.jpg)
 
 ## Setup
 As first creating the router instance. You can use the web portal of Exoscale or otherwise using the command-line tool Egoscale. The installation sources and documentation for Egoscale can be found on the website https://exoscale.github.io/egoscale/.
 
 Start by configuring private networks for your zone. From the portal, click `Compute` -> `Private Networks` -> `Zone` -> `Allocate`
 
-![Private Networks](img/0002.png)
+![Private Networks](.img/0002.png)
 
 For deployment, you need 2 Private Networks. In the egoscale CLI you can create the private networks with the following command.
 ```
@@ -54,7 +54,7 @@ For deployment, you need 2 Private Networks. In the egoscale CLI you can create 
 Next, we recommend creating a firewall rule to protect the instances. For administration purposes, SSH access to the router is used. Restrict this access to the source networks you are using. The VeloCloud Hub site functionality requires a DNAT for the VCMP protocol (UDP 2426). Initially the protocols HTTPS (tcp 443), NTP (tcp / udp 123) and VCMP (udp 2426) are required. The firewall configuration in Exoscale is cross-zone.
 `Compute` -> `Firewalling` -> `Add`
 
-![Add Rule](img/0003.png)
+![Add Rule](.img/0003.png)
 
 In the egoscale CLI you can create the firewall rules with the following command.
 ```
@@ -66,7 +66,7 @@ In the egoscale CLI you can create the firewall rules with the following command
 
 Now create the instance as following. `Compute` -> `Instances` -> `Add`
 
-![Create Instance](img/0004.png)
+![Create Instance](.img/0004.png)
 
 The following informations are required.
 
@@ -90,7 +90,7 @@ Deployment requires about 3-5 minutes due to the updates to the operating system
 Let's move on to creating the virtual edge. To do this, create a instance as following.
 `Compute` -> `Instances` -> `Add`
 
-![Create Instance](img/0005.png)
+![Create Instance](.img/0005.png)
 
 
 The following informations are required.
@@ -113,15 +113,15 @@ At egoscale CLI use as following.
 
 Finally you need access to the Velocloud Edge console. Select `Compute` -> `Instances`. Enter the name of the newly created edge, e.g. vvce1-defra1.
 
-![List Instances](img/0006.png)
+![List Instances](.img/0006.png)
 
 Select the **Name** of the instance filter list and then select `Console`.
 
-![Instance Detail](img/0007.png)
+![Instance Detail](.img/0007.png)
 
 Use console window to login as user *root* with password *velocloud*.
 
-![Console Window Login](img/0008.png)
+![Console Window Login](.img/0008.png)
  
 Activate the Edge with the *activate.py* script.
 
@@ -129,7 +129,7 @@ Activate the Edge with the *activate.py* script.
 
 The Edge is now enabled and can be administered through VeloCloud Orchestrator. The Edge has only one usable LAN port (GE2). You can connect your server instances to the SD WAN via the created private network PrivNet1ForVirtualEdge1.
 
-##Additional Notice
+## Additional Notice
 Please check all script entries of their correctness. The IDs used here in the guide are also carefully checked for accuracy. If you have any questions or comments about this guide, please contact sd-wan@a1.digital.
 
 
