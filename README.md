@@ -32,8 +32,8 @@ access to the Internet. The compute instance will using a interface table as fol
 Neither the interface ranking on Exoscale, nor the mapping table of VeloCloud can be modified.
 In order to be able to use the VeloCloud Edge on Exoscale, an instance is used to correct the interface ranking. The instance uses an operating system with low resource requirements and routing and firewall functionality.
 
-|    **Router**    |    ***VeloCloud Edge***    |
-|------------------|----------------------------|
+|    **Router**                                  |    ***VeloCloud Edge***                                  |
+|------------------------------------------------|----------------------------------------------------------|
 
 ![Router Edge](img/0001.jpg)
 
@@ -41,6 +41,7 @@ In order to be able to use the VeloCloud Edge on Exoscale, an instance is used t
 As first creating the router instance. You can use the web portal of Exoscale or otherwise using the command-line tool Egoscale. The installation sources and documentation for Egoscale can be found on the website https://exoscale.github.io/egoscale/.
 
 Start by configuring private networks for your zone. From the portal, click `Compute` -> `Private Networks` -> `Zone` -> `Allocate`
+
 ![Private Networks](img/0002.png)
 
 For deployment, you need 2 Private Networks. In the egoscale CLI you can create the private networks with the following command.
