@@ -127,4 +127,9 @@ Activate the Edge with the *activate.py* script.
 
 ![Edge Activation](img/0009.png)
 
+The Edge is now enabled and can be administered through VeloCloud Orchestrator. The Edge has only one usable LAN port (GE2). You can connect your server instances to the SD WAN via the created private network PrivNet1ForVirtualEdge1.
+
+##Additional Notice
+Please check all script entries of their correctness. The IDs used here in the guide are also carefully checked for accuracy. If you have any questions or comments about this guide, please contact sd-wan@a1.digital.
+
 
