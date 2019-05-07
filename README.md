@@ -68,15 +68,63 @@ Now create the instance as following. `Compute` -> `Instances` -> `Add`
 
 ![Create Instance](img/0004.png)
 
-The following informations are required. 
+The following informations are required.
+
 | Properties | Values |
 |------------|--------|
-| **Template:** | Linux CentOS 7.6 64-bit |
-| **Instance Type:** | Micro |
-| **Disk:** | 10GB |
-| **Keypair:** | your ssh public key or default |
-| **Private Networks:** | PrivNet2ForVirtualEdge |
-| **Security Groups:** | VeloCloudEdge |
-| **User Data:** |  Additionally use the [Cloud-Init Script](cloud-init/router_default.yml) of the A1 Digital to create the instance. Edit the parameters (<foo bar>) in the script to your desired values. |
+| Template: | Linux CentOS 7.6 64-bit |
+| Instance Type: | Micro |
+| Disk: | 10GB |
+| Keypair: | your ssh public key or default |
+| Private Networks: | PrivNet2ForVirtualEdge |
+| Security Groups: | VeloCloudEdge |
+| User Data: |  Finally to create a instance please use the [Cloud-Init Script](cloud-init/router_default.yml) from the A1 Digital. Edit the parameters (<foo bar>) in the script to your desired values. |
+
+In the egoscale CLI use as following.
+```
+[user@host ~ ]$ exo vm create “vvcr1-defra1” –service-offering micro --template 296422c9-c15d-4cca-b599-8d8a48334096 --security-group  VelocloudEdge -–privnet PrivNet2ForVirtualEdge1 --zone de-fra-1 --disk 10 –-cloud-init-file ~/router_default.yml 
+```
+
+Deployment requires about 3-5 minutes due to the updates to the operating system of the created instance. After that, the system is already available and ready for use.
+
+Let's move on to creating the virtual edge. To do this, create a instance as following.
+`Compute` -> `Instances` -> `Add`
+
+![Create Instance](img/0005.png)
+
+
+The following informations are required.
+
+| Properties | Values |
+|------------|--------|
+| Hostname | e.g. vvce1-defra1 |
+| Template: | edge-VC_KVM_GUEST-x86_64-3.2.1-174-R321-20181018-GA-updatable-ext4 |
+| Instance Type: | Medium |
+| Disk: | 10GB |
+| Keypair: | your ssh public key or default |
+| Private Networks: | PrivNet1ForVirtualEdge, PrivNet2ForVirtualEdge |
+| Security Groups: | Default |
+| User Data: | not working |
+
+At egoscale CLI use as following.
+```
+[user@host ~ ]$ exo vm create “vvce1-defra1” –service-offering medium --template cdb8d70f-84ef-4c29-8ab3-e58212a99253 --security-group default -–privnet PrivNet1ForVirtualEdge1,PrivNet2ForVirtualEdge1 --zone de-fra-1 --disk 10 
+```
+
+Finally you need access to the Velocloud Edge console. Select `Compute` -> `Instances`. Enter the name of the newly created edge, e.g. vvce1-defra1.
+
+![List Instances](img/0006.png)
+
+Select the **Name** of the instance filter list and then select `Console`.
+
+![Instance Detail](img/0007.png)
+
+Use console window to login as user *root* with password *velocloud*.
+
+![Console Window Login](img/0008.png)
+ 
+Activate the Edge with the *activate.py* script.
+
+![Edge Activation](img/0009.png)
 
 
