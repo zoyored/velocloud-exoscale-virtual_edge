@@ -124,7 +124,7 @@ Use console window to login as user *root* with password *velocloud*.
  
 Activate the Edge with the *activate.py* script.
 
-![Edge Activation](img/0009.png)
+![Edge Activation](.img/0009.png)
 
 The Edge is now enabled and can be administered through VeloCloud Orchestrator. The Edge has only one usable LAN port (GE2). You can connect your server instances to the SD WAN via the created private network PrivNet1ForVirtualEdge1.
 
