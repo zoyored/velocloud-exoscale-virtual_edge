@@ -3,14 +3,34 @@
 \#A1 Digital Deutschland GmbH, 2019<br>
 \#sd-wan@a1.digital 
 ## Requirements 
-Prequisites for deploying a virtual VeloCloud Edge to Exoscale are.
-- use of A1 Digital SD WAN with valid license
-- use of the Exoscale platform with vailid payment
-- user with Administrator role for configuration on both platforms
-- egoscale CLI tool (alternatively)
+Prequisites for deploying the Virtual VeloCloud Edge on Exoscale are as follows:
+- "A1 Digital SD-WAN" incl. valid license
+- active exoscale account
+- user with administrator privileges on both platforms
+- egoscale CLI tool (optional)
 
 ## Introduction
-The virtual VeloCloud Edge template are using a interface mapping table as following.
+
+
+Due to configuration limitations on both sides (VeloCloud Virtual Edge and Exoscale) 
+it is not possible to run a vanilla(unaltered) VeloCloud Virtual Edge in a standalone scenario on Exoscale.
+
+The reason for this are the strict interface configuration settings on Exoscale.
+An Exoscale instance always uses the first interface(eth0) as WAN interface.
+All subsequent configurable interfaces are utilized as privat network interfaces 
+and are not ment to be used as an internetbreakout/WAN-Exit point.
+
+This leaves us with 2 options. 
+
+Either we are lossing support for VeloCloud by changing VMWare's VeloCloud Virtual Edge-Image or we deploy a seperate minimal virtual machine with a firewall that remaps the network interfaces for us.
+
+> DO NOT GO WITH THE FIRST OPTION UNLESS YOU REALLY KNOW WHAT YOU ARE DOING
+
+This readme explains only the second option as it is suitable for most customers. So we are going to deploy 2 seperate Exoscale instances. A VeloCloud Virtual Edge instance and a "router" instance which remaps the interfaces for us.
+
+But first let's have a look on the network interfaces mappings of both VeloCloud Virtual Edge and Exoscale.
+
+The VeloCloud Virtual Edge template is using the following network interface mapping.
 
 | Interface Name by OS | Interface Name by VeloCloud | Description |
 |----------------------|-----------------------------|-------------|
@@ -19,9 +39,9 @@ The virtual VeloCloud Edge template are using a interface mapping table as follo
 | Eth2 | GE3 | WAN Port (DHCP by default) |
 | Eth3 | GE4 | WAN Port (DHCP by default) |
 
-An instance on Exoscale always uses the Eth0 interface as a WAN interface. 
-All subsequent configurable interfaces are Privat Network interfaces. They having no direct
-access to the Internet. The compute instance will using a interface table as following.
+
+
+The Exoscale instance (compute instance) is using the following network interface mapping scheme:
 
 | Interface Name | Descrition |
 |----------------|------------|
@@ -29,8 +49,7 @@ access to the Internet. The compute instance will using a interface table as fol
 | Eth1 | Private Network Interface with or w/o DHCP Service |
 | Eth2 | Private Network Interface with or w/o DHCP Service |
 
-Neither the interface ranking on Exoscale, nor the mapping table of VeloCloud can be modified.
-In order to be able to use the VeloCloud Edge on Exoscale, an instance is used to correct the interface ranking. The instance uses an operating system with low resource requirements and routing and firewall functionality.
+As mentioned we can sadly set neither of these settings with a parameter or configfile thus we are using a seperate Exoscale instance and assign them the same "Private Network". The "router"  instance will NAT everything from its first network device(eth0) to the third network device(eth2), which is VeloClouds first WAN Interface (GE3).
 
       Router                                 VeloCloud Edge
 
